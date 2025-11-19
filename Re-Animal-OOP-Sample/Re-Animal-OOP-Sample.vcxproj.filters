@@ -1,17 +1,87 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <ClInclude Include="User.h">
+      <Filter>Animal</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseTask.h">
+      <Filter>Task</Filter>
+    </ClInclude>
+    <ClInclude Include="Executor.h">
+      <Filter>Executor</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalTimerQueue.h" />
+    <ClInclude Include="Singleton.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeUtil.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="BaseDBTask.h">
+      <Filter>Task\DB</Filter>
+    </ClInclude>
+    <ClInclude Include="Worker.h">
+      <Filter>Task\Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="DBManager.h" />
+    <ClInclude Include="UserDBTask.h">
+      <Filter>Task\DB</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="User.cpp">
+      <Filter>Animal</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseTask.cpp">
+      <Filter>Task</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalType.h">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Executor.cpp">
+      <Filter>Executor</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalTimerQueue.cpp" />
+    <ClCompile Include="BaseDBTask.cpp">
+      <Filter>Task\DB</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Worker.cpp">
+      <Filter>Task\Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="DBManager.cpp" />
+    <ClCompile Include="UserDBTask.cpp">
+      <Filter>Task\DB</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Animal">
+      <UniqueIdentifier>{0272ca49-bc0b-4e87-aa11-0b0e6710820e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Executor">
+      <UniqueIdentifier>{ed56ed90-e669-49e0-bbf3-99c526b0f9f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Task">
+      <UniqueIdentifier>{24c78aa4-6124-48df-b712-6973d4eb2df8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{67fae85c-b78d-4a20-bc31-ef8a1a54af03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Task\User">
+      <UniqueIdentifier>{dbc00f0b-3cf9-41ea-8fc7-6669517f32de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{6ca10314-b404-4c54-a502-01ea88c9ce1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Task\DB">
+      <UniqueIdentifier>{84754aae-80d2-4145-9255-e5d19de4b40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Task\Worker">
+      <UniqueIdentifier>{a6f3afcd-5a90-4038-9491-5ff84ad6c003}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Re-Animal-OOP-Sample.rc" />
   </ItemGroup>
 </Project>
