@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="User.h">
-      <Filter>Animal</Filter>
-    </ClInclude>
     <ClInclude Include="BaseTask.h">
       <Filter>Task</Filter>
     </ClInclude>
@@ -28,11 +25,11 @@
     <ClInclude Include="UserDBTask.h">
       <Filter>Task\DB</Filter>
     </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>User</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="User.cpp">
-      <Filter>Animal</Filter>
-    </ClCompile>
     <ClCompile Include="BaseTask.cpp">
       <Filter>Task</Filter>
     </ClCompile>
@@ -54,11 +51,11 @@
     <ClCompile Include="UserDBTask.cpp">
       <Filter>Task\DB</Filter>
     </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Animal">
-      <UniqueIdentifier>{0272ca49-bc0b-4e87-aa11-0b0e6710820e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Executor">
       <UniqueIdentifier>{ed56ed90-e669-49e0-bbf3-99c526b0f9f4}</UniqueIdentifier>
     </Filter>
@@ -68,9 +65,6 @@
     <Filter Include="Global">
       <UniqueIdentifier>{67fae85c-b78d-4a20-bc31-ef8a1a54af03}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Task\User">
-      <UniqueIdentifier>{dbc00f0b-3cf9-41ea-8fc7-6669517f32de}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Util">
       <UniqueIdentifier>{6ca10314-b404-4c54-a502-01ea88c9ce1c}</UniqueIdentifier>
     </Filter>
@@ -79,6 +73,9 @@
     </Filter>
     <Filter Include="Task\Worker">
       <UniqueIdentifier>{a6f3afcd-5a90-4038-9491-5ff84ad6c003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="User">
+      <UniqueIdentifier>{dbc00f0b-3cf9-41ea-8fc7-6669517f32de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

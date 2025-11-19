@@ -30,6 +30,7 @@ public:
 		for (int i = 0; i < count; ++i)
 		{
 			auto* worker = new Worker();
+			worker->Run();
 			_workers.emplace_back(worker);
 		}
 	}
@@ -41,14 +42,15 @@ public:
 		Post(0, std::forward<F>(f));
 	}
 
-	template<typename F> requires std::derived_from<F, BaseTask>
+	template<typename F> //requires std::derived_from<F, BaseTask>
 	void Post(int32_t threadId, F&& f)
 	{
 		auto* worker = _workers[threadId];
-
+		
 		worker->PushTask(std::forward<F>(f));
 	}
-	template<typename F> requires std::derived_from<std::remove_pointer_t<F>, BaseTask>
+
+	template<typename F> //requires std::derived_from<std::remove_pointer_t<F>, BaseTask>
 	void PostDelay(int32_t threadId, int64_t t, F&& f)
 	{
 		GlobalTimerQueue::Instance().Push(f, t);

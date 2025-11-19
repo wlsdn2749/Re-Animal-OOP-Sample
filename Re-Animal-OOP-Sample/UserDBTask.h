@@ -28,6 +28,7 @@ public:
 	User*				GetUser();
 	UserSharedPtr		GetUserPtr();
 	int32_t				GetUserKey();
+	int32_t				GetUserId();
 
 protected:
 	UserSharedPtr _user;

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "UserDBTask.h"
 #include <queue>
 #include <vector>
 #include <mutex>
@@ -7,16 +6,38 @@
 #include "Singleton.h"
 #include "TimeUtil.h"
 #include "Worker.h"
+#include <functional>
 
-class UserDBTask;
+//using FuncPair = std::pair<Func, int64_t>; // Task, Time  Pair
 
-using TaskPair = std::pair<UserDBTask*, int64_t>; // Task, Time  Pair
+struct FuncPair
+{
+	FuncPair(std::function<void()> func, int64_t t)
+		: _func(std::move(func))
+		, _t(t)
+	{
+		
+	}
+public:
+	const int64_t GetTime() const
+	{
+		return _t;
+	}
+
+	std::function<void()> GetFunc()
+	{
+		return std::move(_func);
+	}
+private:
+	std::function<void()> _func;
+	int64_t _t;
+};
 
 struct compare
 {
-	bool operator()(const TaskPair* tp1, const TaskPair* tp2)
+	bool operator()(const FuncPair* tp1, const FuncPair* tp2)
 	{
-		return (*tp1).second > (*tp2).second;
+		return tp1->GetTime() > tp2->GetTime();
 	}
 };
 
@@ -25,60 +46,45 @@ struct compare
 class GlobalTimerQueue : public Singleton<GlobalTimerQueue>
 {
 public:
-	void Initialize()
-	{
-		_jobTimerThread = std::thread([]()
-			{
-				while (true)
-				{
-					auto task_vec = GlobalTimerQueue::Instance().PopAll();
-					for (const auto& task : task_vec)
-					{
-						/*if (task)
-							GetExecutor().Post(task->GetUserey(), task);*/
-					}
-				}
-			});
-	}
+	void Initialize();
 
 public:
-	void Push(UserDBTask* task, int64_t timeMs)
+	template<typename Func>
+	void Push(Func&& func, int64_t timeMs)
 	{
 		std::lock_guard<std::mutex> lock(_lock);
-		_pq.push(new TaskPair{ task, TimeUtil::GetCurrentTime_t() + timeMs });
+		_pq.push(new FuncPair {std::move(func), TimeUtil::GetCurrentTime_t() + timeMs });
 	}
 
-	UserDBTask* Pop()
+	decltype(auto) Pop()
 	{
 		std::lock_guard<std::mutex> lock(_lock);
-		auto taskPair = _pq.top();
-		if (IsPopable(taskPair))
+		auto funcPair = _pq.top();
+		if (IsPopable(funcPair))
 		{
 			_pq.pop();
-			return taskPair->first;
+			return std::move(funcPair->GetFunc());
 		}
-
-		return nullptr;
 	}
 
-	std::vector<UserDBTask*> PopAll()
+	std::vector<std::function<void()>> PopAll()
 	{
-		std::vector<UserDBTask*> task_vec;
+		std::vector<std::function<void()>> func_vec;
 		std::lock_guard<std::mutex> lock(_lock);
 		while (!_pq.empty())
 		{
-			auto taskPair = _pq.top();
-			if (IsPopable(taskPair))
+			auto funcPair = _pq.top();
+			if (IsPopable(funcPair))
 			{
 				_pq.pop();
-				task_vec.emplace_back(taskPair->first);
+				func_vec.emplace_back(std::move(funcPair->GetFunc()));
 			}
 			else
 			{
 				break;
 			}
 		}
-		return task_vec; // <-- 누락되어 있던 반환 추가
+		return func_vec; // <-- 누락되어 있던 반환 추가
 	}
 
 	size_t Size()
@@ -91,20 +97,20 @@ public:
 		return _pq.empty();
 	}
 
-	TaskPair* Top()
+	FuncPair* Top()
 	{
 		return _pq.top();
 	}
 
 private:
-	bool IsPopable(TaskPair* taskPair)
+	bool IsPopable(FuncPair* taskPair)
 	{
-		return (taskPair->first && taskPair->second < TimeUtil::GetCurrentTime_t());
+		return (taskPair->GetTime() < TimeUtil::GetCurrentTime_t());
 	}
 
 private:
 	std::thread _jobTimerThread;
-	std::priority_queue<TaskPair*, std::vector<TaskPair*>, compare>	_pq;
+	std::priority_queue<FuncPair*, std::vector<FuncPair*>, compare>	_pq;
 	std::mutex														_lock;
 
 };

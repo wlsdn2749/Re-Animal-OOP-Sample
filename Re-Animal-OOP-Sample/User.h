@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "Executor.h"
 #include "DBManager.h"
+#include <cmath>
 #include <atomic>
 
-class User
+class User : public std::enable_shared_from_this<User>
 {
 
 public:
@@ -38,7 +39,14 @@ public:
 	void PostDBTask(Args&&... args)
 	{
 		// DB I/O 스레드 쪽으로 토스 실행하도록
-		DBManager::Instance().Post<T>(std::forward<Args>(args));
+		DBManager::Instance().Post<T>(shared_from_this(), std::forward<Args>(args)...);
+	}
+
+	template<typename T, typename... Args>
+	void PostDBTaskDelay(int64_t t, Args&&... args)
+	{
+		// DB I/O 스레드 쪽으로 토스 실행하도록
+		DBManager::Instance().PostDelay<T>(t, shared_from_this(), std::forward<Args>(args)...);
 	}
 
 public:
@@ -50,7 +58,13 @@ public:
 	uint32_t GetLevel()				{ return _level; }
 	uint32_t GetMoney()				{ return _money; }
 									  
-
+	void ChangeThreadKey()
+	{
+		if(_threadKey == 1) 
+			_threadKey = 0;
+		else 
+			_threadKey = 1;
+	}
 
 private:
 	uint32_t _exp{};

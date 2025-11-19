@@ -4,6 +4,7 @@
 #include <utility>
 #include <exception>
 #include <concepts>   // 추가: std::derived_from
+#include "BaseTask.h"
 
 class DBManager : public Singleton<DBManager>
 {
@@ -12,32 +13,55 @@ public:
     template<typename T, typename... Args> requires std::derived_from<T, BaseTask> // T는 TaskType 
     void Post(Args&&... args)
     {
-        // 여기서 Task 생성
-        auto* task = new T(std::forward<Args>(args));
-        auto threadId = task->GetThreadId(); // 변경: auto* -> auto
+        auto task = std::make_shared<T>(std::forward<Args>(args)...);
+        auto threadId = task->GetUserKey();
 
-        // DB I/O 스레드에서 작업 실행
-        Executor::GetIoExecutor().Post(threadId, [&task]()
-            {   
+        Executor::GetIoExecutor().Post(threadId, [task]() // 복사 캡처
+            {
                 try
                 {
-                    task->Execute(); // DB 작업 실행 ... 이미 실행결과가 저장되어있음
+                    auto result = task->Execute();
+                    std::cout << "DB 실행 결과 " << (result ? "True" : "False") << std::endl;
 
-                    // 결과 얻어내고 유저 스레드 쪽으로 전달
                     auto userThreadId = task->GetUserKey();
 
-                    Executor::GetExecutor().Post(userThreadId, [&task]()
+                    Executor::GetExecutor().Post(userThreadId, [task]() // 복사 캡처
                         {
                             task->Apply();
                         });
                 }
                 catch (const std::exception& e)
                 {
-                    ;
+                    std::cerr << "DBManager Exception: " << e.what() << "\n";
                 }
-            }
-        );
+            });
+    }
 
+    template<typename T, typename... Args>// requires std::derived_from<T, BaseTask> // T는 TaskType 
+    void PostDelay(int64_t t, Args&&... args)
+    {
+        auto task = new T(std::forward<Args>(args)...);
+        auto threadId = task->GetUserKey();
+
+        Executor::GetIoExecutor().PostDelay(threadId, t, [task]() // 복사 캡처
+            {
+                try
+                {
+                    auto result = task->Execute();
+                    std::cout << "DB 실행 결과 " << (result ? "True" : "False") << std::endl;
+
+                    auto userThreadId = task->GetUserKey();
+
+                    Executor::GetExecutor().Post(userThreadId, [task]() // 복사 캡처
+                        {
+                            task->Apply();
+                        });
+                }
+                catch (const std::exception& e)
+                {
+                    std::cerr << "DBManager Exception: " << e.what() << "\n";
+                }
+            });
     }
 };
 
