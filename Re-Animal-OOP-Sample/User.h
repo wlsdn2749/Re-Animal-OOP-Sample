@@ -8,31 +8,59 @@ class User : public std::enable_shared_from_this<User>
 {
 
 public:
-    inline static std::atomic<uint32_t> s_globalUserId{ 0 };
+    inline static std::atomic<int32_t> s_globalUserId{ 0 };
 
     User()
     {
         // 변경: atomic 안전하게 증가시키고 load로 Size()와 계산
-        uint32_t id = s_globalUserId.fetch_add(1, std::memory_order_relaxed);
+        int32_t id = s_globalUserId.fetch_add(1, std::memory_order_relaxed);
         _id = id;
-        _threadKey = static_cast<uint32_t>(id % static_cast<uint32_t>(Executor::GetExecutor().Size()));
+        _threadKey = static_cast<int32_t>(id % static_cast<int32_t>(Executor::GetExecutor().Size()));
+
+		Post([this]() // TODO: shared_from_this로 교체
+			{
+				this->Update();
+			}, 1000); // 1초뒤 호출
     }
 
 public:
-	uint32_t GetThreadKey()
+	int32_t GetThreadKey()
 	{
 		return _threadKey;
 	}
 
-	uint32_t GetId()
+	int32_t GetId()
 	{
 		return _id;
 	}
 
 public:
-	void Post()
-	{
+	void Update();
+	virtual void OnUpdate();
 
+public:
+	template<typename F>
+	void Post(F&& f)
+	{
+		Executor::GetExecutor().Post(GetThreadKey(), f);
+	}
+
+	template<typename F>
+	void Post(F&& f, int64_t t)
+	{
+		Executor::GetExecutor().PostDelay(GetThreadKey(), t, f);
+	}
+
+	template<typename F>
+	void Post(int32_t id, F&& f)
+	{
+		Executor::GetExecutor().Post(id, f);
+	}
+
+	template<typename F>
+	void Post(int32_t id, F&& f, int64_t t)
+	{
+		Executor::GetExecutor().PostDelay(id, t, f); // 시그니처 순서 변경 todo
 	}
 
 	template<typename T, typename... Args>
@@ -60,10 +88,17 @@ public:
 									  
 	void ChangeThreadKey()
 	{
+		auto before_threadKey = _threadKey;
 		if(_threadKey == 1) 
 			_threadKey = 0;
 		else 
 			_threadKey = 1;
+
+		std::cout << "---------------------------------스레드 이동 ----------------------------------------------------" << std::endl;
+		std::cout << "이전 Threadkey " << before_threadKey << " 현재 ThreadKey " << _threadKey << std::endl;
+		std::cout << "---------------------------------스레드 이동 ----------------------------------------------------" << std::endl;
+
+
 	}
 
 private:
@@ -72,7 +107,7 @@ private:
 	uint32_t _money{};
 
 private:
-	uint32_t _threadKey{};
-	uint32_t _id;
+	int32_t _threadKey{};
+	int32_t _id;
 };
 

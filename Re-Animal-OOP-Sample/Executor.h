@@ -39,7 +39,7 @@ public:
 	template<typename F>
 	void Post(F&& f)
 	{
-		Post(0, std::forward<F>(f));
+		Post(static_cast<int32_t>(0), std::forward<F>(f));
 	}
 
 	template<typename F> //requires std::derived_from<F, BaseTask>

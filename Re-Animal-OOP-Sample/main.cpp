@@ -25,6 +25,11 @@ int main()
 
 	GlobalTimerQueue::Instance().Initialize();
 	user->PostDBTaskDelay<UpdateUserExp>(5000, 5); // 5000ms
+	user->PostDBTaskDelay<UpdateUserMoney>(3000, 3); // 3000ms
+	user->PostDBTaskDelay<UpdateUserLevel>(10000, 10); // 10000ms
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(7000));
+	user->ChangeThreadKey(); // 0에서 1로  .. 7초 후에 이동
 
 	while (true)
 	{
