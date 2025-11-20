@@ -7,11 +7,11 @@ void GlobalTimerQueue::Initialize()
 		{
 			while (true)
 			{
-				auto task_vec = GlobalTimerQueue::Instance().PopAll();
-				for (const auto& task : task_vec)
+				auto f_vec = GlobalTimerQueue::Instance().PopAll();
+				for (const auto& f : f_vec)
 				{
-					if (task)
-						Executor::GetExecutor().Post(task);
+					if (f)
+						f();
 				}
 			}
 		});

@@ -23,7 +23,8 @@ int main()
 	//	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	//}
 
-	user->PostDBTaskDelay<UpdateUserExp>(10, 5); // 1000ms
+	GlobalTimerQueue::Instance().Initialize();
+	user->PostDBTaskDelay<UpdateUserExp>(5000, 5); // 5000ms
 
 	while (true)
 	{

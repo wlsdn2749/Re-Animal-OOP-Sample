@@ -5,6 +5,7 @@
 #include <exception>
 #include <concepts>   // 추가: std::derived_from
 #include "BaseTask.h"
+#include "UserDBTask.h"
 
 class DBManager : public Singleton<DBManager>
 {
